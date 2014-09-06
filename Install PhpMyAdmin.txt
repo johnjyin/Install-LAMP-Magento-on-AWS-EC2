@@ -1,0 +1,124 @@
+#
+#   V0.1
+#   John Yin 06/09/2014
+#	www.ebizdesigner.com
+#
+
+#
+#
+#	install phpMyAdmin
+#
+# 	https://gist.github.com/aronwoost/1105007
+
+	# There are two ways to install phpmyadmin :
+	# 1. Download phpmyadmin package and install that
+	#
+	# 2. Installing through repositories by enabling epel
+
+	# sudo yum --enablerepo=epel install phpmyadmin
+	# Extra Packages for Enterprise Linux (or EPEL) is a Fedora Special Interest Group 
+	# that creates, maintains, and manages a high quality set of additional packages 
+	# for Enterprise Linux, including, but not limited to, Red Hat Enterprise Linux (RHEL), 
+	# CentOS and Scientific Linux (SL), Oracle Enterprise Linux(OEL).
+	# Reference: http://jafty.com/blog/tag/install-phpmyadmin/
+
+#
+#
+#  Install PhpMyAdmin (1st method)
+#
+# 
+    # GNU Wget (or just Wget, formerly Geturl) is a computer program that 
+    # retrieves content from web servers
+	
+    # 1) Navigate to the html folder
+	$ cd /var/www/html
+	
+	# 2) Download phpMyAdmin installation package
+	$ wget http://sourceforge.net/projects/phpmyadmin/files/phpMyAdmin/4.2.7/phpMyAdmin-4.2.7-english.tar.bz2
+	
+	# 3) Unzip to /var/www/html/
+	# Use the relevant option z or j according to the compression method gzip or bzip2 respectively 
+	
+	# -C Change to directory DIR before performing any operations.
+	# http://www.computerhope.com/unix/utar.htm
+	$ tar -jxf phpMyAdmin-4.2.7-english.tar.bz2 -C /var/www/html
+	  
+	# 4) Rename the directory to 'phpmyadmin'
+	  mv phpMyAdmin-4.2.7-english phpmyadmin
+	  
+	# 5) Make a config directory in the phpmyadmin main folder
+	$ cd /var/www/html/phpmyadmin
+	$ mkdir config
+	  
+	# 6) create config.inc.php file by sample
+	$ cp /var/www/html/phpmyadmin/config.sample.inc.php /var/www/html/phpmyadmin/config/config.inc.php
+	
+	# 7) Open config.inc.php in nano text editor 
+	$ sudo nano /config/config.inc.php
+	
+	# 8) Find the line that reads ¡°$cfg['blowfish_secret'] = 'xxx';¡± 
+	#    and change it to any of your secret code
+	  $cfg['blowfish_secret'] = 'yoursecretcode'; 
+	  
+	# 9) Find the line that reads ¡°$cfg['Servers'][$i]['AllowNoPassword'] = false;¡± 
+	#    and change false to true only if you don¡¯t have a root password set 
+	#    or if you are not sure. You can always come back and change this to 
+	#    false again later when you tighten up your server¡¯s security as you 
+	#    will want to do before too long.
+	
+	# 10)Go to http://your_public_DNS/phpmyadmin/ and enter you mysql admin username and password. 
+
+#
+#
+#	Uninstall phpMyAdmin
+#
+#
+	# first find all packges related to php
+	$ rpm -qa | grep php
+	
+	$ rpm -qa | grep php
+	$ yum remove phpmyadmin
+
+#
+#
+#	install phpMyAdmin (2nd Method)
+#
+#
+	# Open the apache config file
+	$ nano /etc/http/conf/httpd.conf
+	
+	# Search and change the following line to append index.php to the end of it.
+	$ DirectoryIndex index.html index.html.var
+	
+	# You can search in nano by using Ctrl + W. After the change it should be
+	DirectoryIndex index.html index.html.var index.php
+
+	# Restart the Apache Web Server
+	$ /etc/init.d/httpd restart
+	
+	# or
+	$ sudo service httpd restart
+	
+	# Download the latest copy of PhpMyAdmin and copy into the /var/www/html folder. 
+	# Extract the contents and copy the contents to phpMyAdmin
+	$ cd /var/www/html
+	$ wget http://kaz.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.2.7/phpMyAdmin-4.2.7-all-languages.tar.gz
+	
+	# Extract the files 
+	$ tar -zxvf phpMyAdmin-4.2.7-all-languages.tar.gz
+	$ mv phpMyAdmin-4.2.7-all-languages phpMyAdmin
+	
+	# Add a .htaccess file to the phpMyAdmin folder within the instance 
+	# and using htpasswd to secure the site using basic HTTP authentication. The process to do this is:
+	$ cd /var/www/html/phpMyAdmin
+	$ touch .htaccess
+
+	# To add a user named myuser to a new file called .htaccess use the following syntax
+	$ nano .htaccess
+
+	# Then add the following line but substitute username for the user you would like to grant access to:
+    $ htpasswd -cds .htaccess username
+
+	# You will then be prompted for a password when accessing the URL as described below
+	
+	....

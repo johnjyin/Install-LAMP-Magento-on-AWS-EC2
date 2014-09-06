@@ -1,0 +1,146 @@
+#
+#   V0.1
+#   John Yin 06/09/2014
+#	www.ebizdesigner.com
+#
+
+#
+#   Installing a LAMP Web Server
+#
+# 
+
+    # We use Amazon Lunix because we believe we can get a better support from Amazon
+	# This Tutorial has been always updated by Amazon and very helpful
+	# http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/install-LAMP.html
+	
+	# Here is just a summary of all steps, for details for above Amazon on-line tutorial
+	
+	# To connect AWS EC2 instance from Windows Using PuTTY
+	# Details as following link
+	# http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-connect-to-instance-linux.html#using-putty
+	
+	# Update all software packages
+	$ sudo yum update -y
+	
+	# Use the yum groupinstall to intall multiple software packages
+	#    include: Apache web server, MySQL, and PHP software packages
+	
+	# We can list out what package in yum
+	$ yum grouplist
+	
+	# This moment (2014 September) the Apache Web Server is 2.2.7, MySQL is 5.5, PHP is 5.3
+	$ sudo yum groupinstall -y "Web Server" "MySQL Database" "PHP Support"
+	
+	# We can use following command to list all related information
+	$ php -i
+	# or just php version
+	$ php -v
+	# or just MySQL version
+	$ mysqladmin -u root -p version
+	# or just Apache version
+	$ httpd -v
+	
+    # Install the php-mysql package.
+	$ sudo yum install -y php-mysql
+	
+	# Start the Apache web server
+	$ sudo service httpd start
+	
+	# Use the chkconfig command to configure the Apache web server to start at each system boot
+	$ sudo chkconfig httpd on
+	
+	# You can verify that httpd is on by running the following command.
+	$ chkconfig --list httpd
+	
+#
+#
+#	To set file permissions
+#
+#
+
+    # The Amazon Linux Apache document root is /var/www/html, which is owned by root as default.
+    # The Amazon EC2 Instance default user is ec2-user
+	# To allow ec2-user to manipulate files in this directory, 
+	# we need to modify the ownership and permissions of the directory.
+	
+	# Add the www group to your instance.
+	$ sudo groupadd www
+	
+	# Add your user (in this case, ec2-user) to the www group.
+	$ sudo usermod -a -G www ec2-user
+	
+	# Log out 
+	$ exit
+	
+	# Reconnect to your instance, and then run the following command 
+	# to verify your membership in the www group.
+	$ groups
+	
+	# Change the group ownership of /var/www and its contents to the www group.
+	$ sudo chown -R root:www /var/www
+	
+	# Change the directory permissions of /var/www and its subdirectories to 
+	# add group write permissions and to set the group ID on future subdirectories.
+	$ sudo chmod 2775 /var/www
+    $ find /var/www -type d -exec sudo chmod 2775 {} +
+	
+	# Recursively change the file permissions of /var/www and its subdirectories 
+	# to add group write permissions.
+	$ find /var/www -type f -exec sudo chmod 0664 {} +
+	
+#
+#
+#	To secure the MySQL server
+#
+#
+
+    # The default installation of the MySQL server has several features that are 
+	# great for testing and development, but they should be disabled or removed 
+	# for production servers.
+	
+	# Start the MySQL server so that you can run mysql_secure_installation. 
+	$ sudo service mysqld start
+	
+	# Run mysql_secure_installation. 
+	$ sudo mysql_secure_installation
+	
+	# When prompted, enter a password for the root account.
+
+        # - Enter the current root password. By default, the root account 
+		#   does not have a password set, so press Enter.
+
+        # - Type Y to set a password, and enter a secure password twice. 
+		#   For more information about creating a secure password, 
+		#   go to http://www.pctools.com/guides/password/. Make sure to store this password in a safe place.
+
+    # Type Y to remove the anonymous user accounts.
+
+    # Type Y to disable remote root login.
+
+    # Type Y to remove the test database.
+
+    # Type Y to reload the privilege tables and save your changes.
+	
+	# To make MySQL server to start at every boot, enter the following command.
+	$ sudo chkconfig mysqld on
+
+#
+#
+#	Create Database
+#
+#
+
+	# create yourdatabase
+	# login PhpMyAdmin, and create your_database
+	
+	# login MySql as root
+	[root@ip-172-31-29-211 httpd]# mysql -u root -p
+	Enter password:
+
+	# create new user
+	mysql> create user 'your_database_user'@'localhost' IDENTIFIED BY 'user_password'
+
+	# grant user database priviliege
+	mysql> GRANT ALL ON your_database.* TO 'your_database_user'@'localhost' WITH GRANT OPTION;
+	mysql> flush privileges;
+

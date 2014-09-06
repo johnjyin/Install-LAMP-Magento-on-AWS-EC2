@@ -1,0 +1,185 @@
+#
+#   V0.1
+#   John Yin 06/09/2014
+#	www.ebizdesigner.com
+#
+
+#
+#
+#	Install Magento
+#	1) suppose we have installed LAMP
+#
+
+    # enter /var/www/html
+    $ cd /var/www/html
+  
+	# copy magento intallation archive file to current path 
+	# . (dot) runs a shell script in the current environment and then returns.
+	$ cp /your_upload_magento_path/magento-1.9.0.1.zip .
+	  
+	# Extract the files from archive
+	# unzip cmd is available in Amazon Unix 
+	# tar is used for unpacking .tar files
+	# The advantage with tar is that it consumes very little time and CPU to compress files, 
+	# but the compression isn¡¯t very much either. 
+	# Tar is probably the Linux/UNIX version of zip ¨C quick and dirty.
+	$ unzip magento-1.9.0.1.zip
+	  
+	# rename folder name: magento-1.9.0.1 to name: magento
+    $ mv magento-1.9.0.1 magento
+
+#
+# 
+#	Install Optional Sample Data
+#
+#
+
+	# Magento provides sample data you can optionally install to give you an idea 
+	# of what products look like in the Admin Panel and in your web store. 
+	# You must install sample data on the file system and in the database before you install Magento.
+	# 1) Download the sample data from one of the locations
+	     http://www.magentocommerce.com/download
+	
+	# 2) Transfer the sample data to your Magento server.
+	#    we can use WinSCP to upload the sample data to server
+	# 3) On your Magento server, extract the sample data archive to a directory 
+	#    other than your Magento installation directory.
+	#    and copy the sample data's media directory and subdirectories to 
+	#    your Magento installation directory.
+	$ cd /var/www/html/magento/media
+	$ cp -R /var/www/magento-sample-data-1.9.0.0/media/* .
+	
+	# 4) Copy the sample data's skin directory to [your Magento install dir]/skin
+	$ cd /var/www/html/magento/skin
+	$ cp -R /var/www/magento-sample-data-1.9.0.0/skin/* .
+	
+	# 5) Import the CE sample data into MySQL database 
+	$ mysql -u root -p magento < /var/www/magento-sample-data-1.9.0.0/magento_sample_data_for_1.9.0.0.sql
+
+#
+#
+#	Setting File and Directory Ownership and Privileges
+#
+#
+
+    # Magento recommends the following ownership and privilege settings for 
+    # files and directories in the Magento installation directory:
+
+    # The Magento installation directory and all subdirectories are owned by
+    # the web server user. 
+	# This enables the web server to change files in these subdirectories 
+	# but other users cannot access them (except a higher-level user such as root).
+    # All directories have 700 permissions (drwx------).
+    # 700 permissions give full control (that is, read/write/execute) to the owner 
+	# and no permissions to anyone else.
+    # All files have 600 permissions (-rw-------).
+    # 600 permissions mean the owner can read and write but other users have no permissions.
+	
+	# Note: The way you set permissions and ownership depends on whether Magento is running 
+	# on a dedicated or hosted system:
+        # Hosted: A Magento server located on a hosting provider. A hosted system typically 
+		# does not enable you to elevate to root. The web server typically runs as an ordinary user.
+        # Magento assumes you log in as this user to start and stop the web server and 
+		# that you already own all the files and directories in the Magento installation directory.
+		# You can use chmod to change permissions on files and directories.
+
+		# Dedicated: A Magento server you control and operate. Unlike a hosted system, you can
+        # elevate to root and, as root, you can use the chown and chmod commands to set ownership 
+		# and privileges in the Magento installation directory.
+	
+	# Enter your Magento installation directory
+
+    $ cd /var/www/html/magento
+
+	# set directory permissions to 775 and file permissions to 755
+	
+	# when we set directory as 700, and files permission as 600, we get following error
+	#  Forbidden
+    # You don't have permission to access /magento/ on this server.
+    # Apache/2.2.27 (Amazon) Server at 54.255.175.185 Port 80
+	
+	$ find . -type d -exec chmod 775 {} \;
+	$ sudo find . -type f -exec chmod 755 {} \;
+	
+	
+#
+#
+#	Installing Magento CE 
+#
+#
+
+#
+#
+#	Change New Base Address/Domain
+#
+#	being happened when we use new domain name, or restart the AWS EC2 Instance 
+#
+
+    # Then you must check 2 things:
+    # In the database, look into the ¡®core_config_data¡¯ table to find these values:
+    # web/unsecure/base_url and web/secure/base_url 
+	# You will need to change the domains here.
+	mysql> SELECT * FROM `core_config_data` WHERE path="web/unsecure/base_url";
+	
+	# There should one record has the old site address as base url
+	# Update it to new site url
+    mysql> UPDATE `core_config_data` SET value="http://you-new-site-address/magento/" WHERE path="web/unsecure/base_url";
+    
+	# There should one record has the old site address as secure base url
+    mysql> SELECT * FROM `core_config_data` WHERE path="web/secure/base_url";
+	
+	# There should one record has the old site secure url
+	SELECT * FROM `core_config_data` WHERE path="web/secure/base_url";
+	# Update it to new site secure url
+    mysql> UPDATE `core_config_data` SET value="http://you-new-site-address/magento/" WHERE path="web/secure/base_url";
+
+	# Make sure to delete everything inside the /var/cache, /var/sessions and /var/tmp folders.
+	$ CD /var/www/html/magento/var/cache
+	
+	# If above steps are all correct and you site is still being redirected to the old site
+	# please refer to this tutorial
+	# http://www.exquisitelymixed.com/ecommerce/magento/magento-keeps-redirecting-to-the-old-site/
+
+#
+#	Changing MySQL root user password using mysql command
+#
+#   
+    # referrence: http://www.cyberciti.biz/faq/mysql-change-root-password/
+
+    # Use the following mysql command to verify that the new password is working or not?
+	$ mysql -u root -p'123456' db-name-here
+
+    # Login to mysql server, type the following command at shell prompt
+	$ mysql -u root -p
+
+    # Use mysql database (type command at mysql> prompt)
+    mysql> use mysql;
+	
+    # Change password for user nixcraft, enter
+    mysql> update user set password=PASSWORD("NEWPASSWORD") where User='nixcraft';
+
+    # Finally, reload the privileges and quit MySql
+    mysql> flush privileges;
+	mysql> quit
+	
+
+
+#
+#
+#	Update magento user password 
+#
+#
+	
+	UPDATE `admin_user` SET `password` = MD5('3456') WHERE `username` = 'john360';
+
+
+#
+#	How to remove index.php from URLs?
+#
+#
+
+    # Reference http://stackoverflow.com/questions/10474740/how-to-remove-index-php-from-urls
+	# http://stackoverflow.com/questions/11702708/magento-urls-other-than-home-page-do-not-work-without-index-php
+	
+	GRANT ALL PRIVILEGES ON magento.* To 'magento'@'localhost' IDENTIFIED BY 'password'
+	
