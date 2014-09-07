@@ -1,0 +1,108 @@
+#
+#   V0.2
+#   John Yin 06/09/2014
+#	www.ebizdesigner.com
+#
+
+#
+#
+#	install phpMyAdmin
+#
+# 	
+
+	# There are two ways to install phpmyadmin :
+	# 1. Download phpmyadmin package and install that
+	# 2. Installing through repositories by enabling epel
+
+
+#
+#
+#	install phpMyAdmin (1st Method)
+#
+#
+	
+	# Firstly, we configure the phpMyAdmin apache configuration.
+	# Open the apache config file
+	$ nano /etc/http/conf/httpd.conf
+	
+	# Search and change the following line to append index.php to the end of it.
+	$ DirectoryIndex index.html index.html.var
+	
+	# You can search in nano by using Ctrl + W. After the change it should be
+	DirectoryIndex index.html index.html.var index.php
+
+	# Restart the Apache Web Server
+	$ /etc/init.d/httpd restart
+	# or
+	$ sudo service httpd restart
+	
+	# Download the latest copy of PhpMyAdmin and copy into the /var/www/html folder. 
+	# Extract the contents and copy the contents to phpMyAdmin
+	$ cd /var/www/html
+	$ wget http://kaz.dl.sourceforge.net/project/phpmyadmin/phpMyAdmin/4.2.7/phpMyAdmin-4.2.7-all-languages.tar.gz
+	
+	# Extract the files 
+	$ tar -zxvf phpMyAdmin-4.2.7-all-languages.tar.gz
+	$ mv phpMyAdmin-4.2.7-all-languages phpMyAdmin
+	
+	# Access the phpMyAdmin by http://your-site-base-url/phpMyAdmin
+	
+#
+#
+#	Install phpMyAdmin (2nd method)
+#
+#
+
+	# sudo yum --enablerepo=epel install phpmyadmin
+	
+	# There are many guide can refer to
+	# for example, https://gist.github.com/aronwoost/1105007
+	# which guide to install phpMyAdmin v2.2
+
+	#
+	#
+	#	Uninstall phpMyAdmin
+	#
+	#
+		# first find all packges related to php
+		$ rpm -qa | grep php
+		$ yum remove phpmyadmin
+
+
+	# The 2nd method would be easier to do, but the phpmyadmin version would decided 
+	# by the repository of EPEL. Usually, it would be one older version phpmyadmin.
+
+#
+#
+#	Enhance the phpMyAdmin security by .htaccess
+#
+#
+	# Create a .htaccess file to the phpMyAdmin folder within the instance 
+	# and using htpasswd to secure the site using basic HTTP authentication. 
+	$ cd /var/www/html/phpMyAdmin
+	# Create a empty .htaccess file
+	$ touch .htaccess
+
+	# Edit .htaccess 
+	$ nano .htaccess
+	# To input following rules into .htaccess
+	AuthUserFile /var/www/html/phpMyAdmin/.htpasswd
+	AuthType Basic
+	AuthName "My Secret Folder"
+	Required valid-user
+	# Note:
+	# AuthType : refers to the type of authentication that wil be use to check the passwrd
+	# AuthName : text that will be displayed at the password prompt and you can Put anything
+	# AuthUserFile : path for file password / will create next step
+	# Require valid-user : tells the .htaccess file that only users in password file to access it.
+	
+
+	# Then to create .htpasswd
+	# Use the htpasswd command to create .htpasswd file 
+	# and place it in a directory of your choice as long as it is not accessible from a browser.
+    $ htpasswd -c .htaccess user-name
+	# You will then be prompted for a password the user-name
+	
+	# Last to restart the apache
+	$ service httpd restart
+	
