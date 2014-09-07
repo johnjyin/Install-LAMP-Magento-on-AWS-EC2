@@ -1,4 +1,6 @@
 #
+#	V0.1
+# 	John Yin
 #
 #	reference
 #	http://www.thingaweek.com/how-install-geoip-and-modgeoip2-amazon-ec2
@@ -6,105 +8,21 @@
 #	
 #
 
-[ec2-user@ip-172-31-29-211 ~]$ yum list *geoip*
-Loaded plugins: priorities, update-motd, upgrade-helper
-2562 packages excluded due to repository priority protections
-Available Packages
-GeoIP.i686                            1.4.8-1.5.amzn1               amzn-main
-GeoIP.x86_64                          1.4.8-1.5.amzn1               amzn-main
-GeoIP-devel.x86_64                    1.4.8-1.5.amzn1               amzn-main
-geoip.x86_64                          1.4.6-1.el5.rf                rpmforge
-geoip-devel.x86_64                    1.4.6-1.el5.rf                rpmforge
-lighttpd-mod_geoip.x86_64             1.4.35-1.9.amzn1              amzn-updat
-mod24_geoip.x86_64                    1.2.7-1.6.amzn1               amzn-updat
-mod_geoip.x86_64                      1.2.7-1.2.amzn1               amzn-main
-python-geoip.x86_64                   1.2.4-1.el5.rf                rpmforge
+$ yum list *geoip*
 
 
-[ec2-user@ip-172-31-29-211 ~]$ sudo yum install GeoIP GeoIP-devel GeoIP-data z
-Loaded plugins: priorities, update-motd, upgrade-helper
-amzn-main/latest                                                   | 2.1 kB
-amzn-updates/latest                                                | 2.3 kB
-rpmforge                                                           | 1.9 kB
-2562 packages excluded due to repository priority protections
-No package GeoIP-data available.
-Resolving Dependencies
---> Running transaction check
----> Package GeoIP.x86_64 0:1.4.8-1.5.amzn1 will be installed
----> Package GeoIP-devel.x86_64 0:1.4.8-1.5.amzn1 will be installed
----> Package zlib-devel.x86_64 0:1.2.7-10.17.amzn1 will be installed
---> Finished Dependency Resolution
+$ sudo mkdir /usr/local/share/GeoIP
+$ cd /usr/local/share/GeoIP
+$ sudo wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz
 
-Dependencies Resolved
+$ sudo wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
 
-==============================================================================
- Package              Arch            Version                    Repository
-==============================================================================
-Installing:
- GeoIP                x86_64          1.4.8-1.5.amzn1            amzn-main
- GeoIP-devel          x86_64          1.4.8-1.5.amzn1            amzn-main
- zlib-devel           x86_64          1.2.7-10.17.amzn1          amzn-main
-
-Transaction Summary
-==============================================================================
-Install  3 Packages
-
-Total download size: 846 k
-Installed size: 1.6 M
-Is this ok [y/d/N]: y
-Downloading packages:
-(1/3): GeoIP-1.4.8-1.5.amzn1.x86_64.rpm                            | 783 kB
-(2/3): GeoIP-devel-1.4.8-1.5.amzn1.x86_64.rpm                      |  11 kB
-(3/3): zlib-devel-1.2.7-10.17.amzn1.x86_64.rpm                     |  52 kB
-------------------------------------------------------------------------------
-Total                                                     4.7 MB/s | 846 kB  0
-Running transaction check
-Running transaction test
-Transaction test succeeded
-Running transaction
-  Installing : GeoIP-1.4.8-1.5.amzn1.x86_64
-  Installing : GeoIP-devel-1.4.8-1.5.amzn1.x86_64
-  Installing : zlib-devel-1.2.7-10.17.amzn1.x86_64
-  Verifying  : zlib-devel-1.2.7-10.17.amzn1.x86_64
-  Verifying  : GeoIP-1.4.8-1.5.amzn1.x86_64
-  Verifying  : GeoIP-devel-1.4.8-1.5.amzn1.x86_64
-
-Installed:
-  GeoIP.x86_64 0:1.4.8-1.5.amzn1               GeoIP-devel.x86_64 0:1.4.8-1.5.
-  zlib-devel.x86_64 0:1.2.7-10.17.amzn1
-
-Complete!
-
-[ec2-user@ip-172-31-29-211 ~]$ sudo mkdir /usr/local/share/GeoIP
-[ec2-user@ip-172-31-29-211 ~]$ cd /usr/local/share/GeoIP
-[ec2-user@ip-172-31-29-211 GeoIP]$ sudo wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz
---2014-09-04 14:09:26--  http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz
-Resolving geolite.maxmind.com (geolite.maxmind.com)... 108.168.254.117, 2607:f0d0:3:7::4
-Connecting to geolite.maxmind.com (geolite.maxmind.com)|108.168.254.117|:80... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 412789 (403K) [application/octet-stream]
-Saving to: ¡®GeoIP.dat.gz¡¯
-
-100%[====================================>] 412,789      187KB/s   in 2.2s
-
-2014-09-04 14:09:28 (187 KB/s) - ¡®GeoIP.dat.gz¡¯ saved [412789/412789]
-
-[ec2-user@ip-172-31-29-211 GeoIP]$ sudo wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
---2014-09-04 14:12:46--  http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
-Resolving geolite.maxmind.com (geolite.maxmind.com)... 108.168.254.117, 2607:f0d0:3:7::4
-Connecting to geolite.maxmind.com (geolite.maxmind.com)|108.168.254.117|:80... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 11813773 (11M) [application/octet-stream]
-Saving to: ¡®GeoLiteCity.dat.gz¡¯
-
-100%[====================================>] 11,813,773  2.45MB/s   in 7.0s
-
-2014-09-04 14:12:53 (1.62 MB/s) - ¡®GeoLiteCity.dat.gz¡¯ saved [11813773/11813773]
 
 # uncompresses the file GeoIP.dat.gz and 
 # replaces it with the uncompressed version named "GeoIP.dat"
-[ec2-user@ip-172-31-29-211 GeoIP]$ sudo gunzip GeoIP.dat.gz
-[ec2-user@ip-172-31-29-211 GeoIP]$ ls -la
+
+$ sudo gunzip GeoIP.dat.gz
+$ ls -la
 total 12256
 drwxr-xr-x 2 root root     4096 Sep  4 14:13 .
 drwxr-xr-x 7 root root     4096 Sep  4 14:06 ..
@@ -116,11 +34,8 @@ drwxr-xr-x 7 root root     4096 Sep  4 14:06 ..
 # The mission of the Apache Portable Runtime (APR) is to provide 
 # a free library of C data structures and routines.
 
-[ec2-user@ip-172-31-29-211 GeoIP]$ yum list apr-devel
-Loaded plugins: priorities, update-motd, upgrade-helper
-2562 packages excluded due to repository priority protections
-Available Packages
-apr-devel.x86_64                 1.5.0-2.11.amzn1                 amzn-updates
+$ yum list apr-devel
+
 
 # The httpd-devel package contains the APXS binary and other files 
 # that you need to build Dynamic Shared Objects (DSOs) for Apache. 
@@ -128,91 +43,9 @@ apr-devel.x86_64                 1.5.0-2.11.amzn1                 amzn-updates
 # able to compile or develop additional modules for Apache, 
 # you need to install this package.
 
-[ec2-user@ip-172-31-29-211 GeoIP]$ yum list httpd-devel
-Loaded plugins: priorities, update-motd, upgrade-helper
-2562 packages excluded due to repository priority protections
-Available Packages
-httpd-devel.x86_64                2.2.27-1.3.amzn1                amzn-updates
+$ yum list httpd-devel
 
-
-[ec2-user@ip-172-31-29-211 GeoIP]$ sudo yum install httpd-devel apr-devel
-Loaded plugins: priorities, update-motd, upgrade-helper
-amzn-main/latest                                                          | 2.1 kB     00:00
-amzn-updates/latest                                                       | 2.3 kB     00:00
-2562 packages excluded due to repository priority protections
-Resolving Dependencies
---> Running transaction check
----> Package apr-devel.x86_64 0:1.5.0-2.11.amzn1 will be installed
----> Package httpd-devel.x86_64 0:2.2.27-1.3.amzn1 will be installed
---> Processing Dependency: apr-util-devel for package: httpd-devel-2.2.27-1.3.amzn1.x86_64
---> Running transaction check
----> Package apr-util-devel.x86_64 0:1.4.1-4.14.amzn1 will be installed
---> Processing Dependency: expat-devel(x86-64) for package: apr-util-devel-1.4.1-4.14.amzn1.x86_64
---> Processing Dependency: openldap-devel(x86-64) for package: apr-util-devel-1.4.1-4.14.amzn1.x86_64
---> Running transaction check
----> Package expat-devel.x86_64 0:2.0.1-11.9.amzn1 will be installed
----> Package openldap-devel.x86_64 0:2.4.23-34.23.amzn1 will be installed
---> Processing Dependency: cyrus-sasl-devel >= 2.1 for package: openldap-devel-2.4.23-34.23.amzn1.x86_64
---> Running transaction check
----> Package cyrus-sasl-devel.x86_64 0:2.1.23-13.15.amzn1 will be installed
---> Finished Dependency Resolution
-
-Dependencies Resolved
-
-=================================================================================================
- Package                  Arch           Version                      Repository            Size
-=================================================================================================
-Installing:
- apr-devel                x86_64         1.5.0-2.11.amzn1             amzn-updates         208 k
- httpd-devel              x86_64         2.2.27-1.3.amzn1             amzn-updates         162 k
-Installing for dependencies:
- apr-util-devel           x86_64         1.4.1-4.14.amzn1             amzn-main             78 k
- cyrus-sasl-devel         x86_64         2.1.23-13.15.amzn1           amzn-updates         356 k
- expat-devel              x86_64         2.0.1-11.9.amzn1             amzn-main            144 k
- openldap-devel           x86_64         2.4.23-34.23.amzn1           amzn-main            1.4 M
-
-Transaction Summary
-=================================================================================================
-Install  2 Packages (+4 Dependent packages)
-
-Total download size: 2.3 M
-Installed size: 8.1 M
-Is this ok [y/d/N]: y
-Downloading packages:
-(1/6): apr-devel-1.5.0-2.11.amzn1.x86_64.rpm                              | 208 kB     00:00
-(2/6): apr-util-devel-1.4.1-4.14.amzn1.x86_64.rpm                         |  78 kB     00:00
-(3/6): cyrus-sasl-devel-2.1.23-13.15.amzn1.x86_64.rpm                     | 356 kB     00:00
-(4/6): expat-devel-2.0.1-11.9.amzn1.x86_64.rpm                            | 144 kB     00:00
-(5/6): httpd-devel-2.2.27-1.3.amzn1.x86_64.rpm                            | 162 kB     00:00
-(6/6): openldap-devel-2.4.23-34.23.amzn1.x86_64.rpm                       | 1.4 MB     00:00
--------------------------------------------------------------------------------------------------
-Total                                                            7.2 MB/s | 2.3 MB  00:00:00
-Running transaction check
-Running transaction test
-Transaction test succeeded
-Running transaction
-  Installing : apr-devel-1.5.0-2.11.amzn1.x86_64                                             1/6
-  Installing : expat-devel-2.0.1-11.9.amzn1.x86_64                                           2/6
-  Installing : cyrus-sasl-devel-2.1.23-13.15.amzn1.x86_64                                    3/6
-  Installing : openldap-devel-2.4.23-34.23.amzn1.x86_64                                      4/6
-  Installing : apr-util-devel-1.4.1-4.14.amzn1.x86_64                                        5/6
-  Installing : httpd-devel-2.2.27-1.3.amzn1.x86_64                                           6/6
-  Verifying  : apr-util-devel-1.4.1-4.14.amzn1.x86_64                                        1/6
-  Verifying  : cyrus-sasl-devel-2.1.23-13.15.amzn1.x86_64                                    2/6
-  Verifying  : httpd-devel-2.2.27-1.3.amzn1.x86_64                                           3/6
-  Verifying  : expat-devel-2.0.1-11.9.amzn1.x86_64                                           4/6
-  Verifying  : apr-devel-1.5.0-2.11.amzn1.x86_64                                             5/6
-  Verifying  : openldap-devel-2.4.23-34.23.amzn1.x86_64                                      6/6
-
-Installed:
-  apr-devel.x86_64 0:1.5.0-2.11.amzn1            httpd-devel.x86_64 0:2.2.27-1.3.amzn1
-
-Dependency Installed:
-  apr-util-devel.x86_64 0:1.4.1-4.14.amzn1      cyrus-sasl-devel.x86_64 0:2.1.23-13.15.amzn1
-  expat-devel.x86_64 0:2.0.1-11.9.amzn1         openldap-devel.x86_64 0:2.4.23-34.23.amzn1
-
-Complete!
-
+$ sudo yum install httpd-devel apr-devel
 
 # Enable Mod_GeoIP in Apache
 
@@ -222,147 +55,14 @@ GeoIPDBFile /usr/share/GeoIP/GeoIP.dat
 </IfModule>
 
 # Restart the Apache service to reflect changes.
-[ec2-user@ip-172-31-29-211 GeoIP]$ sudo service httpd restart
-Stopping httpd:                                            [  OK  ]
-Starting httpd:                                            [  OK  ]
+$ sudo service httpd restart
+
+$ sudo yum install gcc
 
 
-[ec2-user@ip-172-31-29-211 mod_geoip2_1.2.5]$ sudo yum install gcc
-Loaded plugins: priorities, update-motd, upgrade-helper
-amzn-main/latest                                                          | 2.1 kB     00:00
-amzn-updates/latest                                                       | 2.3 kB     00:00
-2562 packages excluded due to repository priority protections
-Resolving Dependencies
---> Running transaction check
----> Package gcc.noarch 0:4.8.2-3.19.amzn1 will be installed
---> Processing Dependency: gcc48 = 4.8.2 for package: gcc-4.8.2-3.19.amzn1.noarch
---> Running transaction check
----> Package gcc48.x86_64 0:4.8.2-7.87.amzn1 will be installed
---> Processing Dependency: cpp48(x86-64) = 4.8.2-7.87.amzn1 for package: gcc48-4.8.2-7.87.amzn1.x86_64
---> Processing Dependency: libgomp(x86-64) >= 4.8.2-7.87.amzn1 for package: gcc48-4.8.2-7.87.amzn1.x86_64
---> Processing Dependency: binutils >= 2.23.51.0.1 for package: gcc48-4.8.2-7.87.amzn1.x86_64
---> Processing Dependency: libmpfr.so.1()(64bit) for package: gcc48-4.8.2-7.87.amzn1.x86_64
---> Processing Dependency: libgomp.so.1()(64bit) for package: gcc48-4.8.2-7.87.amzn1.x86_64
---> Processing Dependency: libmpc.so.2()(64bit) for package: gcc48-4.8.2-7.87.amzn1.x86_64
---> Running transaction check
----> Package binutils.x86_64 0:2.23.52.0.1-12.45.amzn1 will be installed
----> Package cpp48.x86_64 0:4.8.2-7.87.amzn1 will be installed
----> Package libgomp.x86_64 0:4.8.2-7.87.amzn1 will be installed
----> Package libmpc.x86_64 0:0.8.2-1.4.amzn1 will be installed
----> Package mpfr.x86_64 0:2.4.2-1.7.amzn1 will be installed
---> Finished Dependency Resolution
+$ sudo apxs -i -a -L/usr/lib64 -I/usr/include -lGeoIP -c mod_geoip.c
 
-Dependencies Resolved
-
-=================================================================================================
- Package            Arch             Version                           Repository           Size
-=================================================================================================
-Installing:
- gcc                noarch           4.8.2-3.19.amzn1                  amzn-main           3.7 k
-Installing for dependencies:
- binutils           x86_64           2.23.52.0.1-12.45.amzn1           amzn-main           6.3 M
- cpp48              x86_64           4.8.2-7.87.amzn1                  amzn-main           6.4 M
- gcc48              x86_64           4.8.2-7.87.amzn1                  amzn-main            16 M
- libgomp            x86_64           4.8.2-7.87.amzn1                  amzn-main           147 k
- libmpc             x86_64           0.8.2-1.4.amzn1                   amzn-main            49 k
- mpfr               x86_64           2.4.2-1.7.amzn1                   amzn-main           182 k
-
-Transaction Summary
-=================================================================================================
-Install  1 Package (+6 Dependent packages)
-
-Total download size: 30 M
-Installed size: 59 M
-Is this ok [y/d/N]: y
-Downloading packages:
-(1/7): binutils-2.23.52.0.1-12.45.amzn1.x86_64.rpm                        | 6.3 MB     00:00
-(2/7): cpp48-4.8.2-7.87.amzn1.x86_64.rpm                                  | 6.4 MB     00:00
-(3/7): gcc-4.8.2-3.19.amzn1.noarch.rpm                                    | 3.7 kB     00:00
-(4/7): gcc48-4.8.2-7.87.amzn1.x86_64.rpm                                  |  16 MB     00:00
-(5/7): libgomp-4.8.2-7.87.amzn1.x86_64.rpm                                | 147 kB     00:00
-(6/7): libmpc-0.8.2-1.4.amzn1.x86_64.rpm                                  |  49 kB     00:00
-(7/7): mpfr-2.4.2-1.7.amzn1.x86_64.rpm                                    | 182 kB     00:00
--------------------------------------------------------------------------------------------------
-Total                                                             40 MB/s |  30 MB  00:00:00
-Running transaction check
-Running transaction test
-Transaction test succeeded
-Running transaction
-  Installing : mpfr-2.4.2-1.7.amzn1.x86_64                                                   1/7
-  Installing : libmpc-0.8.2-1.4.amzn1.x86_64                                                 2/7
-  Installing : cpp48-4.8.2-7.87.amzn1.x86_64                                                 3/7
-  Installing : libgomp-4.8.2-7.87.amzn1.x86_64                                               4/7
-  Installing : binutils-2.23.52.0.1-12.45.amzn1.x86_64                                       5/7
-  Installing : gcc48-4.8.2-7.87.amzn1.x86_64                                                 6/7
-  Installing : gcc-4.8.2-3.19.amzn1.noarch                                                   7/7
-  Verifying  : gcc-4.8.2-3.19.amzn1.noarch                                                   1/7
-  Verifying  : binutils-2.23.52.0.1-12.45.amzn1.x86_64                                       2/7
-  Verifying  : mpfr-2.4.2-1.7.amzn1.x86_64                                                   3/7
-  Verifying  : gcc48-4.8.2-7.87.amzn1.x86_64                                                 4/7
-  Verifying  : libmpc-0.8.2-1.4.amzn1.x86_64                                                 5/7
-  Verifying  : cpp48-4.8.2-7.87.amzn1.x86_64                                                 6/7
-  Verifying  : libgomp-4.8.2-7.87.amzn1.x86_64                                               7/7
-
-Installed:
-  gcc.noarch 0:4.8.2-3.19.amzn1
-
-Dependency Installed:
-  binutils.x86_64 0:2.23.52.0.1-12.45.amzn1           cpp48.x86_64 0:4.8.2-7.87.amzn1
-  gcc48.x86_64 0:4.8.2-7.87.amzn1                     libgomp.x86_64 0:4.8.2-7.87.amzn1
-  libmpc.x86_64 0:0.8.2-1.4.amzn1                     mpfr.x86_64 0:2.4.2-1.7.amzn1
-
-Complete!
-
-
-
-
-
-[ec2-user@ip-172-31-29-211 mod_geoip2_1.2.5]$ sudo apxs -i -a -L/usr/lib64 -I/usr/include -lGeoIP -c mod_geoip.c
-/usr/lib64/apr-1/build/libtool --silent --mode=compile gcc -prefer-pic -O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector --param=ssp-buffer-size=4 -m64 -mtune=generic -Wformat-security -fno-strict-aliasing  -DLINUX -D_REENTRANT -D_GNU_SOURCE -pthread -I/usr/include/httpd  -I/usr/include/apr-1   -I/usr/include/apr-1  -I/usr/include  -c -o mod_geoip.lo mod_geoip.c && touch mod_geoip.slo
-mod_geoip.c: In function 'geoip_header_parser':
-mod_geoip.c:326:3: warning: implicit declaration of function 'ap_add_common_vars' [-Wimplicit-function-declaration]
-   ap_add_common_vars(r);
-   ^
-mod_geoip.c:301:18: warning: unused variable 'gip' [-Wunused-variable]
-  GeoIP          *gip;
-                  ^
-mod_geoip.c: At top level:
-mod_geoip.c:123:14: warning: 'create_geoip_server_config' defined but not used [-Wunused-function]
- static void *create_geoip_server_config( apr_pool_t *p, server_rec *d )
-              ^
-mod_geoip.c: In function 'geoip_header_parser':
-mod_geoip.c:488:21: warning: 'region_name' may be used uninitialized in this function [-Wmaybe-uninitialized]
-        apr_table_set(r->subprocess_env, "GEOIP_REGION_NAME", region_name);
-                     ^
-/usr/lib64/apr-1/build/libtool --silent --mode=link gcc -o mod_geoip.la  -L/usr/lib64 -lGeoIP -rpath /usr/lib64/httpd/modules -module -avoid-version    mod_geoip.lo
-/usr/lib64/httpd/build/instdso.sh SH_LIBTOOL='/usr/lib64/apr-1/build/libtool' mod_geoip.la /usr/lib64/httpd/modules
-/usr/lib64/apr-1/build/libtool --mode=install cp mod_geoip.la /usr/lib64/httpd/modules/
-libtool: install: cp .libs/mod_geoip.so /usr/lib64/httpd/modules/mod_geoip.so
-libtool: install: cp .libs/mod_geoip.lai /usr/lib64/httpd/modules/mod_geoip.la
-libtool: install: cp .libs/mod_geoip.a /usr/lib64/httpd/modules/mod_geoip.a
-libtool: install: chmod 644 /usr/lib64/httpd/modules/mod_geoip.a
-libtool: install: ranlib /usr/lib64/httpd/modules/mod_geoip.a
-libtool: finish: PATH="/sbin:/bin:/usr/sbin:/usr/bin:/sbin" ldconfig -n /usr/lib64/httpd/modules
-----------------------------------------------------------------------
-Libraries have been installed in:
-   /usr/lib64/httpd/modules
-
-If you ever happen to want to link against installed libraries
-in a given directory, LIBDIR, you must either use libtool, and
-specify the full pathname of the library, or use the `-LLIBDIR'
-flag during linking and do at least one of the following:
-   - add LIBDIR to the `LD_LIBRARY_PATH' environment variable
-     during execution
-   - add LIBDIR to the `LD_RUN_PATH' environment variable
-     during linking
-   - use the `-Wl,-rpath -Wl,LIBDIR' linker flag
-   - have your system administrator add LIBDIR to `/etc/ld.so.conf'
-
-See any operating system documentation about shared libraries for
-more information, such as the ld(1) and ld.so(8) manual pages.
-----------------------------------------------------------------------
 chmod 755 /usr/lib64/httpd/modules/mod_geoip.so
-[activating module `geoip' in /etc/httpd/conf/httpd.conf]
 
 
 
