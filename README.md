@@ -12,5 +12,6 @@ If you like it, please Star and fork as support.
 - Install LAMP on AWS EC2 <br />
 - Install PhpMyAdmin on AWS EC2 <br />
 - Install Magento on AWS EC2<br />
-- Display Magento Order Items Price
+- Install GeoIP on AWS EC2 <br />
+- Install FTP Server and FTP account on AWS EC2
 
