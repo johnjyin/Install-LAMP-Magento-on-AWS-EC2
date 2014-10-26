@@ -63,7 +63,7 @@
 	# To allow ec2-user to manipulate files in this directory, 
 	# we need to modify the ownership and permissions of the directory.
 	
-	# Add the www group to your instance.
+	# Add the www group (or any you preferred group name) to your instance.
 	$ sudo groupadd www
 	
 	# Add your user (in this case, ec2-user) to the www group.
@@ -82,7 +82,7 @@
 	# Change the directory permissions of /var/www and its subdirectories to 
 	# add group write permissions and to set the group ID on future subdirectories.
 	$ sudo chmod 2775 /var/www
-    $ find /var/www -type d -exec sudo chmod 2775 {} +
+        $ find /var/www -type d -exec sudo chmod 2775 {} +
 	
 	# Recursively change the file permissions of /var/www and its subdirectories 
 	# to add group write permissions.
