@@ -9,7 +9,8 @@ But AWS EC2 is not as easy as cPanel! That's why I maintain and share my updated
 
 If you like it, please Star and fork as support.
 
-1) Install LAMP on AWS EC2 <br />
-2) Install PhpMyAdmin on AWS EC2 <br />
-3) Install Magento on AWS EC2<br />
+- Install LAMP on AWS EC2 <br />
+- Install PhpMyAdmin on AWS EC2 <br />
+- Install Magento on AWS EC2<br />
+- Display Magento Order Items Price
 
