@@ -1,0 +1,122 @@
+#
+#   V0.1
+#   John Yin 28/10/2014
+#	www.ebizdesigner.com
+#
+
+How to recover the default Magento files permission?
+
+The frontend & backend Magento Website would not launch after performing SYSTEM BACKUP. 
+
+Actually, we can use cPanel backup function to make one full backup of our Magento site to go around this issue.
+
+Here is to tell us how to recover the default Magento files permissions?
+
+It looks like when in System Backup, Magento would change all files permission to be 666 (Magento's got a function in lib/Mage/Archive/Helper/File.php as public function: $mode = \'w+\', $chmod = 0666, which would cause a security precaution on shared web host. 
+
+Because many shared web hosts systems consider 666 an invalid permission and have special monitors in place to prevent users from serving such files. SuExec, SuPHP and cPanel WHM all expect files (especially top level, directly executed PHP files) to not be world writable. 
+
+When have SSH, we just need to run following 
+
+	$ find . -type d -exec chmod 775 {} \;
+	$ sudo find . -type f -exec chmod 644 {} \;
+	$ chmod 550 pear
+	$ chmod 550 mage #for magento 1.5+
+	
+If we do not have access to SSH:
+A way around it is to run following Magento's Cleanup tool: resetting file permissions ( http://www.magentocommerce.com/wiki/groups/227/resetting_file_permissions )
+
+<?php
+
+## Function to set file permissions to 0644 and folder permissions to 0755
+
+function AllDirChmod( $dir = "./", $dirModes = 0755, $fileModes = 0644 ){
+   $d = new RecursiveDirectoryIterator( $dir );
+   foreach( new RecursiveIteratorIterator( $d, 1 ) as $path ){
+      if( $path->isDir() ) chmod( $path, $dirModes );
+      else if( is_file( $path ) ) chmod( $path, $fileModes );
+  }
+}
+
+## Function to clean out the contents of specified directory
+
+function cleandir($dir) {
+
+    if ($handle = opendir($dir)) {
+        while (false !== ($file = readdir($handle))) {
+            if ($file != '.' && $file != '..' && is_file($dir.'/'.$file)) {
+                if (unlink($dir.'/'.$file)) { }
+                else { echo $dir . '/' . $file . ' (file) NOT deleted!<br />'; }
+            }
+            else if ($file != '.' && $file != '..' && is_dir($dir.'/'.$file)) {
+                cleandir($dir.'/'.$file);
+                if (rmdir($dir.'/'.$file)) { }
+                else { echo $dir . '/' . $file . ' (directory) NOT deleted!<br />'; }
+            }
+        }
+        closedir($handle);
+    }
+
+}
+
+function isDirEmpty($dir){
+     return (($files = @scandir($dir)) && count($files) <= 2);
+}
+
+echo "----------------------- CLEANUP START -------------------------<br/>";
+$start = (float) array_sum(explode(' ',microtime()));
+echo "<br/>*************** SETTING PERMISSIONS ***************<br/>";
+echo "Setting all folder permissions to 755<br/>";
+echo "Setting all file permissions to 644<br/>";
+AllDirChmod( "." );
+echo "Setting pear permissions to 550<br/>";
+chmod("pear", 550);
+
+echo "<br/>****************** CLEARING CACHE ******************<br/>";
+
+if (file_exists("var/cache")) {
+    echo "Clearing var/cache<br/>";
+    cleandir("var/cache");
+}
+
+if (file_exists("var/session")) {
+    echo "Clearing var/session<br/>";
+    cleandir("var/session");
+}
+
+if (file_exists("var/minifycache")) {
+    echo "Clearing var/minifycache<br/>";
+    cleandir("var/minifycache");
+}
+
+if (file_exists("downloader/pearlib/cache")) {
+    echo "Clearing downloader/pearlib/cache<br/>";
+    cleandir("downloader/pearlib/cache");
+}
+
+if (file_exists("downloader/pearlib/download")) {
+    echo "Clearing downloader/pearlib/download<br/>";
+    cleandir("downloader/pearlib/download");
+}
+
+if (file_exists("downloader/pearlib/pear.ini")) {
+    echo "Removing downloader/pearlib/pear.ini<br/>";
+    unlink ("downloader/pearlib/pear.ini");
+}
+
+echo "<br/>************** CHECKING FOR EXTENSIONS ***********<br/>";
+If (!isDirEmpty("app/code/local/")) { 
+    echo "-= WARNING =- Overrides or extensions exist in the app/code/local folder<br/>";
+}
+If (!isDirEmpty("app/code/community/")) { 
+    echo "-= WARNING =- Overrides or extensions exist in the app/code/community folder<br/>";
+}
+$end = (float) array_sum(explode(' ',microtime()));
+echo "<br/>------------------- CLEANUP COMPLETED in:". sprintf("%.4f", ($end-$start))." seconds ------------------<br/>";
+?>
+
+
+
+
+
+
